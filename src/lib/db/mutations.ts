@@ -226,11 +226,9 @@ export interface ExperienceEdit {
 export async function editApprovedExperience(experienceId: string, edit: ExperienceEdit) {
   const sql = createDirectDatabaseClient(); const profileId = getDemoProfileId();
   try { return await sql.begin(async (transaction) => {
-    const [ownedImpacts, ownedEvidence, ownedThemes] = await Promise.all([
-      transaction<{ id: string }[]>`select id from public.impacts where experience_id=${experienceId} and profile_id=${profileId}`,
-      transaction<{ id: string }[]>`select id from public.evidence where experience_id=${experienceId} and profile_id=${profileId}`,
-      edit.themes.length ? transaction<{ id: string }[]>`select id from public.themes where profile_id=${profileId} and id in ${transaction(edit.themes.map((item) => item.themeId))}` : Promise.resolve([]),
-    ]);
+    const ownedImpacts = await transaction<{ id: string }[]>`select id from public.impacts where experience_id=${experienceId} and profile_id=${profileId}`;
+    const ownedEvidence = await transaction<{ id: string }[]>`select id from public.evidence where experience_id=${experienceId} and profile_id=${profileId}`;
+    const ownedThemes = edit.themes.length ? await transaction<{ id: string }[]>`select id from public.themes where profile_id=${profileId} and id in ${transaction(edit.themes.map((item) => item.themeId))}` : [];
     const impactAllowlist = new Set(ownedImpacts.map((item) => item.id)); const evidenceAllowlist = new Set(ownedEvidence.map((item) => item.id)); const themeAllowlist = new Set(ownedThemes.map((item) => item.id));
     if (edit.impacts.some((item) => item.id && !impactAllowlist.has(item.id)) || edit.evidence.some((item) => item.id && !evidenceAllowlist.has(item.id)) || edit.themes.some((item) => !themeAllowlist.has(item.themeId))) throw new Error("UNAUTHORIZED_EDIT_REFERENCE");
     const rows = await transaction<{ revision: number }[]>`update public.experiences set title=${edit.title}, occurred_on=${edit.occurredOn}, summary=${edit.summary}, ownership=${edit.ownership}, revision=revision+1, updated_at=now() where id=${experienceId} and profile_id=${profileId} and revision=${edit.revision} returning revision`;
