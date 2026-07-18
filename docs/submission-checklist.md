@@ -2,9 +2,9 @@
 
 ## Repository and deployment
 
-- [ ] Production URL recorded and opens signed out
+- [x] Production URL recorded and presents authentication signed out
 - [ ] Production environment uses `OPENAI_MODEL` and server-only secrets
-- [ ] Remote smoke passes before and after rehearsals
+- [x] Initial remote configuration/database/model smoke passes
 - [ ] Tested deployment commit/tag recorded
 - [ ] Public repository access verified from a separate account, or both required judging accounts added
 - [x] MIT license present

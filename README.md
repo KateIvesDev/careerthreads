@@ -4,6 +4,10 @@ Career Thread is a professional-memory system for turning small work reflections
 
 This repository contains a narrow hackathon MVP. The demo profile and its history are fictional.
 
+Production demo: <https://careerthread.vercel.app>
+
+Access username: `careerthread` (the shared judging password is distributed separately).
+
 ## Implemented flow
 
 1. Start from the seeded Career Record rather than a chat screen.
@@ -103,6 +107,12 @@ npm run smoke:secure -- http://localhost:3000
 ```
 
 For a deployed environment, inject the same variables through the hosting provider and run `npm run smoke -- https://your-host` from a credentialed shell.
+
+Run the browser suite directly against the authenticated production deployment with:
+
+```bash
+PLAYWRIGHT_BASE_URL=https://careerthread.vercel.app npm run test:e2e:secure
+```
 
 ## Privacy and limitations
 
